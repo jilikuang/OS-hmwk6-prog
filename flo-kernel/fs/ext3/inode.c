@@ -27,6 +27,7 @@
 #include <linux/writeback.h>
 #include <linux/mpage.h>
 #include <linux/namei.h>
+#include <linux/gps.h>
 #include "ext3.h"
 #include "xattr.h"
 #include "acl.h"
@@ -3590,4 +3591,25 @@ int ext3_change_inode_journal_flag(struct inode *inode, int val)
 	ext3_std_error(inode->i_sb, err);
 
 	return err;
+}
+
+/* @lfred: added for HW6 */
+int ext3_set_gps_loc(struct inode *ind)
+{
+	/* local vars */	
+	struct gps_kdata *pkdata = &(ind->m_gps);	
+
+	printk("[HW6] ext3_set_gps_loc\n");	
+	get_gps_data(pkdata);
+	return 0;
+}
+
+int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
+{
+	printk("[HW6] ext3_get_gps_loc\n");
+
+	/* TODO */
+	/* maybe we need sync here ? */
+
+	return 0;
 }

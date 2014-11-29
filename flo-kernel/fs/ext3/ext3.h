@@ -1058,6 +1058,9 @@ extern void ext3_set_aops(struct inode *inode);
 extern int ext3_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 		       u64 start, u64 len);
 
+extern int ext3_set_gps_loc(struct inode *ind);
+extern int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc);
+
 /* ioctl.c */
 extern long ext3_ioctl(struct file *, unsigned int, unsigned long);
 extern long ext3_compat_ioctl(struct file *, unsigned int, unsigned long);

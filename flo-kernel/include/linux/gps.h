@@ -1,3 +1,6 @@
+#ifndef __GPS_H__
+#define __GPS_H__
+
 /**
  * Header file of GPS location
  */
@@ -15,3 +18,8 @@ struct gps_kdata {
 	unsigned char m_acc[4];	/* represent 32 bit float 	*/
 	unsigned char m_age[4];	/* represent 32 bit integer	*/
 };
+
+/* function prototypes */
+extern void get_gps_data(struct gps_kdata *data);
+
+#endif /* __GPS_H__ */
