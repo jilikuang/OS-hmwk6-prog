@@ -21,5 +21,7 @@ struct gps_kdata {
 
 /* function prototypes */
 extern void get_gps_data(struct gps_kdata *data);
+extern void set_gps_data(const char __user *pathname, struct gps_kdata *data);
+extern void get_gps_location(const char __user *pathname, struct gps_location __user *loc);
 
 #endif /* __GPS_H__ */

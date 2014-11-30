@@ -103,8 +103,8 @@ static void daemonize(void)
 
 		if (set_gps_location(&loc) < 0){
 			log("Failed to set_gps_location\n");
-			// exit(EXIT_FAILURE);
 		}
+		
 		/*read the values once every second*/
 		sleep(1);
 		fclose(fd);

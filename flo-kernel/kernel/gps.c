@@ -47,6 +47,18 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	return retval;
 }
 
+SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_location __user *, loc){
+	long retval = 0;
+
+	//get the file inode
+
+
+	//get the gpa loc of a file
+	ext3_get_gps_loc(ind, loc);
+
+	return retval;
+}
+
 void get_gps_data(struct gps_kdata *data)
 {
 	read_lock(&s_lock);
