@@ -1,15 +1,20 @@
 /**
  * Implementation of GPS system call
  */
-
+#include <linux/kernel.h>
 #include <linux/syscalls.h>
 #include <linux/gps.h>
 #include <linux/rwlock.h>
 #include <linux/uaccess.h>
 #include <linux/time.h>
+#include <linux/namei.h>
+#include <linux/limits.h>
+
+#include <linux/slab.h>
 
 /* debug define */
 #define log	printk
+#define	R_OK	4 
 
 /* my own repository */
 static struct gps_kdata s_kdata = {
@@ -49,12 +54,45 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_location __user *, loc){
 	long retval = 0;
+	char * s_kpathname;
+	struct gps_location s_kloc;
+	struct inode *file_ind;
+	struct path s_kpath;
 
-	//get the file inode
+	s_kpathname = kmalloc(sizeof(char)*PATH_MAX, GFP_KERNEL);
 
+	if (s_kpathname == NULL)
+		return -ENOMEM;
 
-	//get the gpa loc of a file
-	ext3_get_gps_loc(ind, loc);
+	if (strncpy_from_user(s_kpathname, pathname, PATH_MAX) < 0) { 
+		kfree(s_kpathname);
+		return -EFAULT;
+	}
+
+	if (sys_access(s_kpathname, R_OK) <0 ) { 
+		kfree(s_kpathname);
+		return -EACCES;
+	}
+
+	if (kern_path(s_kpathname, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &s_kpath) != 0)
+		return -EAGAIN;
+
+	file_ind = s_kpath.dentry->d_inode;
+
+	if (file_ind == NULL)
+		return -EINVAL;
+
+	/* check if the file is in ext3 */
+	if (!(file_ind->i_op->get_gps_location))
+		return -ENODEV;
+
+	/* get the gps loc of a file */
+	retval = file_ind->i_op->get_gps_location(file_ind, &s_kloc);
+
+	if (copy_to_user(loc, &s_kloc, sizeof(struct gps_location)) != 0) {
+		kfree(s_kpathname);
+		return -EFAULT;
+	}
 
 	return retval;
 }
