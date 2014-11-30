@@ -13,14 +13,30 @@
 #define log(...)
 #endif
 
+static int read_gpsloc(FILE *fd, struct gps_location *loc)
+{
+	if (fd == NULL || loc == NULL) {
+		log("Null FILE or gps_location in read_gpsloc");
+		return -1;
+	}
+	fscanf(fd, "%lf", &loc->latitude);
+	fscanf(fd, "%lf", &loc->longitude);
+	fscanf(fd, "%f", &loc->accuracy);
+
+	log("Read from GPS_LOCATION_FILE latitude: %f longitude: %f accuracy: %f \n",
+		loc->latitude, loc->longitude, loc->accuracy);
+
+	return 1;
+}
+
 static void daemonize(void)
 {
 	pid_t pid = 0;
-	int fd = 0;
-
+	FILE *fd = NULL;
+	struct gps_location loc;
 	/* Authentication */
-	if (!getuid()) {
-		log("Not root\n");
+	if (getuid()!=0) {
+		log("Sorry you are not root\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -49,6 +65,8 @@ static void daemonize(void)
 		exit(EXIT_SUCCESS);
 	}
 
+#if 0
+
 	/* Set up directory */
 	if (chdir("/") < 0) {
 		log("Failed to change dir\n");
@@ -67,6 +85,30 @@ static void daemonize(void)
 	dup2(fd, 1);
 	dup2(fd, 2);
 	close(fd);
+
+#endif
+
+	while(1) {
+		fd = fopen(GPS_LOCATION_FILE, "r");
+		if (fd == NULL) {
+			log("Failed to open GPS_LOCATION_FILE\n");
+			exit(EXIT_FAILURE);
+		}
+
+		if (read_gpsloc(fd, &loc) < 0) {
+			log("Failed to read_gpsloc\n");
+			fclose(fd);
+			exit(EXIT_FAILURE);
+		}
+
+		if (set_gps_location(&loc) < 0){
+			log("Failed to set_gps_location\n");
+			// exit(EXIT_FAILURE);
+		}
+		/*read the values once every second*/
+		sleep(1);
+		fclose(fd);
+	}
 }
 
 int main(int argc, char *argv[])
@@ -75,4 +117,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
