@@ -309,6 +309,7 @@ struct ext3_inode {
 	} osd2;				/* OS dependent 2 */
 	__le16	i_extra_isize;
 	__le16	i_pad1;
+	struct gps_kdata m_gps;
 };
 
 #define i_size_high	i_dir_acl
