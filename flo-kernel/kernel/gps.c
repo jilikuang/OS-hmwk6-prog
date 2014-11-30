@@ -13,8 +13,8 @@
 
 /* my own repository */
 static struct gps_kdata s_kdata = {
-	.m_lat = {0, 0, 0, 0, 0, 0, 0},
-	.m_lon = {0, 0, 0, 0, 0, 0, 0},
+	.m_lat = {0, 0, 0, 0, 0, 0, 0, 0},
+	.m_lon = {0, 0, 0, 0, 0, 0, 0, 0},
 	.m_acc = {0, 0, 0, 0},
 	.m_age = {0, 0, 0, 0},
 };
