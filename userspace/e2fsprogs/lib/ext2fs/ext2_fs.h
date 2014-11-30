@@ -59,7 +59,7 @@
 /*
  * The second extended file system magic number
  */
-#define EXT3_SUPER_MAGIC	0xEF53
+#define EXT3_SUPER_MAGIC	0xEF54
 #define EXT2_SUPER_MAGIC	EXT3_SUPER_MAGIC
 
 #ifdef __KERNEL__
@@ -371,6 +371,13 @@ struct ext4_new_group_input {
 #define EXT4_IOC_GROUP_ADD		_IOW('f', 8,struct ext4_new_group_input)
 #define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
+struct gps_kdata {
+	unsigned char m_lat[8];	/* represent 64 bit double 	*/
+	unsigned char m_lon[8];	/* represent 64 bit double 	*/	
+	unsigned char m_acc[4];	/* represent 32 bit float 	*/
+	unsigned char m_age[4];	/* represent 32 bit integer	*/
+};
+
 /*
  * Structure of an inode on the disk
  */
@@ -417,7 +424,7 @@ struct ext2_inode {
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
-
+	struct gps_kdata m_gps;
 };
 
 /*
