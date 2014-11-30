@@ -3610,9 +3610,10 @@ int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 	/* TODO */
 	/* maybe we need sync here ? */
 	/*Do we need a read lock here? */
-	&loc->latitude = &ind->m_gps->m_lat;
-	&loc->longitude = &ind->m_gps->m_lon;
-	&loc->accuracy = i&nd->m_gps->m_acc;
+	memcpy (&ind->m_gps.m_lat, &loc->latitude, sizeof(double));
+	memcpy (&ind->m_gps.m_lon, &loc->longitude, sizeof(double));
+	memcpy (&ind->m_gps.m_acc, &loc->accuracy, sizeof(float));
+
 	printk("ext3_get_gps_loc latitude: %f longitude: %f accuracy: %f \n",
 		loc->latitude, loc->longitude, loc->accuracy);
 
