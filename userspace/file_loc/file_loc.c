@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
 	log("GPS read from file: %s \n", pathname);
 
-	if(syscall(__NR_set_gps_location, pathname, &loc) < 0){
+	if(get_gps_location(pathname, &loc) < 0){
 		log("__NR_set_gps_location failed\n");
 		return -1;
 	}

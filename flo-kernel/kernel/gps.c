@@ -34,9 +34,10 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 	/* safety check */
 	if (loc == NULL)
+		log("loc null failure\n");
 		return -EINVAL;
 
-	if (copy_from_user(&kloc, loc, sz) != sz) {
+	if (copy_from_user(&kloc, loc, sz) != 0) {
 		log("copy_from_user failure\n");
 		return -EINVAL;
 	} 
