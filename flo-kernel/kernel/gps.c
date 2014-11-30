@@ -1,4 +1,4 @@
-/**
+/*
  * Implementation of GPS system call
  */
 #include <linux/kernel.h>
@@ -33,9 +33,10 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	struct gps_location kloc;
 
 	/* safety check */
-	if (loc == NULL)
+	if (loc == NULL){
 		log("loc null failure\n");
 		return -EINVAL;
+	}
 
 	if (copy_from_user(&kloc, loc, sz) != 0) {
 		log("copy_from_user failure\n");
@@ -50,11 +51,12 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	memcpy (s_kdata.m_age, &CURRENT_TIME_SEC, sizeof(unsigned long));
 
 	write_unlock(&s_lock);
+
 	return retval;
 }
 
 SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_location __user *, loc){
-	long retval = 0;
+	int retval = 0;
 	char * s_kpathname;
 	struct gps_location s_kloc;
 	struct inode *file_ind;
@@ -62,35 +64,46 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 
 	s_kpathname = kmalloc(sizeof(char)*PATH_MAX, GFP_KERNEL);
 
-	if (s_kpathname == NULL)
+	if (s_kpathname == NULL){
+		log("s_kpathname failure\n");
 		return -ENOMEM;
+	}
 
-	if (strncpy_from_user(s_kpathname, pathname, PATH_MAX) < 0) { 
+
+	if (strncpy_from_user(s_kpathname, pathname, PATH_MAX) < 0){ 
+		log("strncpy_from_user failure\n");
 		kfree(s_kpathname);
 		return -EFAULT;
 	}
 
-	if (sys_access(s_kpathname, R_OK) <0 ) { 
+	if (sys_access(s_kpathname, R_OK) < 0){ 
+		log("sys_access failure\n");
 		kfree(s_kpathname);
 		return -EACCES;
 	}
 
-	if (kern_path(s_kpathname, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &s_kpath) != 0)
+	if (kern_path(s_kpathname, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &s_kpath) != 0){
+		log("kern_path failure\n");
 		return -EAGAIN;
+	}
 
 	file_ind = s_kpath.dentry->d_inode;
 
-	if (file_ind == NULL)
+	if (file_ind == NULL){
+		log("file_ind failure\n");
 		return -EINVAL;
+	}
 
 	/* check if the file is in ext3 */
-	if (!(file_ind->i_op->get_gps_location))
+	if (!(file_ind->i_op->get_gps_location)){
+		log("if the file is in ext3 failure\n");
 		return -ENODEV;
-
+	}
 	/* get the gps loc of a file */
 	retval = file_ind->i_op->get_gps_location(file_ind, &s_kloc);
 
-	if (copy_to_user(loc, &s_kloc, sizeof(struct gps_location)) != 0) {
+	if (copy_to_user(loc, &s_kloc, sizeof(struct gps_location)) != 0){
+		log("copy_to_user failure\n");
 		kfree(s_kpathname);
 		return -EFAULT;
 	}

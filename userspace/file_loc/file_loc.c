@@ -20,6 +20,7 @@
 
 int main(int argc, char **argv)
 {
+	int retval = 0;
 	char *pathname;
 	char *g_url = "https://www.google.com/maps/@";
 	struct gps_location loc;
@@ -33,15 +34,19 @@ int main(int argc, char **argv)
 
 	log("GPS read from file: %s \n", pathname);
 
-	if(get_gps_location(pathname, &loc) < 0){
+	retval = get_gps_location(pathname, &loc);
+
+	if(retval < 0){
 		log("__NR_set_gps_location failed\n");
+		log("retval: %f\n", (float)retval);
+
 		return -1;
 	}
 
 	log("__NR_set_gps_location success\n");
 
-	log("latitude: %f longitude: %f accuracy: %f \n",
-	loc.latitude, loc.longitude, loc.accuracy);
+	log("latitude: %f longitude: %f accuracy: %f age: %f \n",
+	loc.latitude, loc.longitude, loc.accuracy, (float)retval);
 
 	log("Google Maps URL: %s%f,%f,15z \n", g_url, loc.latitude, loc.longitude);
 
