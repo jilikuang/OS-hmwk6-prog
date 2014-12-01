@@ -17,8 +17,7 @@ adb shell ln -s /dev/block/loop7 /dev/loop7
 
 adb push hmwk6.fs /data/misc
 adb shell mkdir /data/misc/hmwk6
-
 adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
 
-adb shell echo test3 > test3
+adb shell mkdir /data/misc/hmwk6/test3
 adb shell cat proc/kmsg

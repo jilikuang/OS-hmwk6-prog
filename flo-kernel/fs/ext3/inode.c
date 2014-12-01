@@ -3606,8 +3606,16 @@ int ext3_set_gps_loc(struct inode *ind)
 
 int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 {
+	/* TODO */
+	/* maybe we need sync here ? */
+
+	/*Do we need a read lock here? */
+	memcpy (&loc->latitude, &ind->m_gps.m_lat, sizeof(double));
+	memcpy (&loc->longitude, &ind->m_gps.m_lon, sizeof(double));
+	memcpy (&loc->accuracy, &ind->m_gps.m_acc, sizeof(float));
+
 	printk("inode m_age is: %d%d%d%d%d\n", ind->m_gps.m_age[0],ind->m_gps.m_age[1],
-		ind->m_gps.m_age[2],ind->m_gps.m_age[3],ind->m_gps.m_age[4]);
+		ind->m_gps.m_age[2],ind->m_gps.m_age[3]);
 
 	printk("inode m_lat is: %d%d%d%d%d%d%d%d\n", ind->m_gps.m_lat[0],ind->m_gps.m_lat[1],
 		ind->m_gps.m_lat[2],ind->m_gps.m_lat[3],ind->m_gps.m_lat[4],
@@ -3618,16 +3626,7 @@ int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 		ind->m_gps.m_lon[5],ind->m_gps.m_lon[6],ind->m_gps.m_lon[7]);
 
 	printk("inode m_acc is: %d%d%d%d%d%d%d%d\n", ind->m_gps.m_acc[0],ind->m_gps.m_acc[1],
-		ind->m_gps.m_acc[2],ind->m_gps.m_acc[3],ind->m_gps.m_acc[4]);
-
-	/* TODO */
-	/* maybe we need sync here ? */
-
-	/*Do we need a read lock here? */
-	memcpy (&loc->latitude, &ind->m_gps.m_lat, sizeof(double));
-	memcpy (&loc->longitude, &ind->m_gps.m_lon, sizeof(double));
-	memcpy (&loc->accuracy, &ind->m_gps.m_acc, sizeof(float));
-
+		ind->m_gps.m_acc[2],ind->m_gps.m_acc[3]);
 
 	return &ind->m_gps.m_age;
 }
