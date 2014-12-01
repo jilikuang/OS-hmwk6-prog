@@ -20,5 +20,5 @@ adb shell mkdir /data/misc/hmwk6
 
 adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
 
-adb shell mkdir /data/misc/hmwk6/test3
+adb shell echo test3 > test3
 adb shell cat proc/kmsg
