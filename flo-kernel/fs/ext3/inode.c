@@ -3606,7 +3606,7 @@ int ext3_set_gps_loc(struct inode *ind)
 
 int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 {
-	printk("[HW6] ext3_get_gps_loc\n");
+	printk("inode age is: %s, %d \n", ind->m_gps.m_age, &ind->m_gps.m_age);
 	/* TODO */
 	/* maybe we need sync here ? */
 

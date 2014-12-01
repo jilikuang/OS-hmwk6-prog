@@ -35,14 +35,13 @@ int main(int argc, char **argv)
 	log("GPS read from file: %s \n", pathname);
 
 	retval = get_gps_location(pathname, &loc);
-
+/*
 	if(retval < 0){
 		log("__NR_set_gps_location failed\n");
 		log("retval: %f\n", (float)retval);
-
 		return -1;
 	}
-
+*/
 	log("__NR_set_gps_location success\n");
 
 	log("latitude: %f longitude: %f accuracy: %f age: %f \n",

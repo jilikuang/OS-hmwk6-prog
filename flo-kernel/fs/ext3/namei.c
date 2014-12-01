@@ -1,3 +1,4 @@
+
 /*
  *  linux/fs/ext3/namei.c
  *
@@ -2527,6 +2528,9 @@ const struct inode_operations ext3_dir_inode_operations = {
 	.removexattr	= generic_removexattr,
 #endif
 	.get_acl	= ext3_get_acl,
+	/* Bo for hw6 ext3 gps feature */
+	.get_gps_location = ext3_get_gps_loc,
+    .set_gps_location = ext3_set_gps_loc,
 };
 
 const struct inode_operations ext3_special_inode_operations = {
@@ -2538,4 +2542,7 @@ const struct inode_operations ext3_special_inode_operations = {
 	.removexattr	= generic_removexattr,
 #endif
 	.get_acl	= ext3_get_acl,
+	/* Bo for hw6 ext3 gps feature */
+	.get_gps_location = ext3_get_gps_loc,
+    .set_gps_location = ext3_set_gps_loc,
 };

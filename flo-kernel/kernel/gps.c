@@ -57,10 +57,15 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 
 SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_location __user *, loc){
 	int retval = 0;
-	char * s_kpathname;
+	char *s_kpathname;
 	struct gps_location s_kloc;
 	struct inode *file_ind;
 	struct path s_kpath;
+
+	if (sys_access(pathname, R_OK) != 0){ 
+		log("sys_access failure\n");
+		return -EACCES;
+	}
 
 	s_kpathname = kmalloc(sizeof(char)*PATH_MAX, GFP_KERNEL);
 
@@ -76,11 +81,7 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 		return -EFAULT;
 	}
 
-	if (sys_access(s_kpathname, R_OK) < 0){ 
-		log("sys_access failure\n");
-		kfree(s_kpathname);
-		return -EACCES;
-	}
+	log("s_kpathname: %s\n", s_kpathname);
 
 	if (kern_path(s_kpathname, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &s_kpath) != 0){
 		log("kern_path failure\n");
@@ -88,6 +89,7 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 	}
 
 	file_ind = s_kpath.dentry->d_inode;
+	log("s_kpath dentry name: %s \n", s_kpath.dentry->d_name.name);
 
 	if (file_ind == NULL){
 		log("file_ind failure\n");
@@ -95,10 +97,11 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 	}
 
 	/* check if the file is in ext3 */
-	if (!(file_ind->i_op->get_gps_location)){
+	if ((file_ind->i_op->get_gps_location) == NULL){
 		log("if the file is in ext3 failure\n");
 		return -ENODEV;
 	}
+	
 	/* get the gps loc of a file */
 	retval = file_ind->i_op->get_gps_location(file_ind, &s_kloc);
 
