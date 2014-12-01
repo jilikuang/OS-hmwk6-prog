@@ -48,24 +48,10 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	memcpy (s_kdata.m_lat, &loc->latitude, sizeof(double));
 	memcpy (s_kdata.m_lon, &loc->longitude, sizeof(double));
 	memcpy (s_kdata.m_acc, &loc->accuracy, sizeof(float));
-	memcpy (s_kdata.m_age, &CURRENT_TIME_SEC, sizeof(unsigned long));
+	memcpy (s_kdata.m_age, &CURRENT_TIME_SEC.tv_sec, sizeof(unsigned long));
 
 	write_unlock(&s_lock);
-/*
-	log("s_kdata.m_age is: %d%d%d%d%d\n", s_kdata.m_age[0],s_kdata.m_age[1],
-		s_kdata.m_age[2],s_kdata.m_age[3]);
 
-	log("s_kdata.m_lat is: %d%d%d%d%d%d%d%d\n", s_kdata.m_lat[0],s_kdata.m_lat[1],
-		s_kdata.m_lat[2],s_kdata.m_lat[3],s_kdata.m_lat[4],
-		s_kdata.m_lat[5],s_kdata.m_lat[6],s_kdata.m_lat[7]);
-
-	log("s_kdata.m_lon is: %d%d%d%d%d%d%d%d\n", s_kdata.m_lon[0],s_kdata.m_lon[1],
-		s_kdata.m_lon[2],s_kdata.m_lon[3],s_kdata.m_lon[4],
-		s_kdata.m_lon[5],s_kdata.m_lon[6],s_kdata.m_lon[7]);
-
-	log("s_kdata.m_acc is: %d%d%d%d%d%d%d%d\n", s_kdata.m_acc[0],s_kdata.m_acc[1],
-		s_kdata.m_acc[2],s_kdata.m_acc[3]);
-*/
 	return retval;
 }
 
@@ -97,7 +83,7 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 
 	log("s_kpathname: %s\n", s_kpathname);
 
-	if (kern_path(s_kpathname, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT, &s_kpath) != 0){
+	if (kern_path(s_kpathname, LOOKUP_FOLLOW, &s_kpath) != 0){
 		log("kern_path failure\n");
 		return -EAGAIN;
 	}
@@ -130,27 +116,17 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 
 void get_gps_data(struct gps_kdata *data)
 {
+	__kernel_time_t s_kdata_age;
+
 	read_lock(&s_lock);
 	
 	memcpy (&data->m_lat, s_kdata.m_lat, sizeof(double));
 	memcpy (&data->m_lon, s_kdata.m_lon, sizeof(double));
 	memcpy (&data->m_acc, s_kdata.m_acc, sizeof(float));
-	memcpy (&data->m_age, s_kdata.m_age, sizeof(unsigned long));
+
+	memcpy (&s_kdata_age, s_kdata.m_age, sizeof(float));
+	s_kdata_age = CURRENT_TIME_SEC.tv_sec - s_kdata_age; 
+	memcpy (&data->m_age, &s_kdata_age, sizeof(unsigned long));
 
 	read_unlock(&s_lock);
-
-	log("data m_age is: %d%d%d%d%d\n", data->m_age[0],data->m_age[1],
-		data->m_age[2],data->m_age[3]);
-
-	log("data m_lat is: %d%d%d%d%d%d%d%d\n", data->m_lat[0],data->m_lat[1],
-		data->m_lat[2],data->m_lat[3],data->m_lat[4],
-		data->m_lat[5],data->m_lat[6],data->m_lat[7]);
-
-	log("data m_lon is: %d%d%d%d%d%d%d%d\n", data->m_lon[0],data->m_lon[1],
-		data->m_lon[2],data->m_lon[3],data->m_lon[4],
-		data->m_lon[5],data->m_lon[6],data->m_lon[7]);
-
-	log("data m_acc is: %d%d%d%d%d%d%d%d\n", data->m_acc[0],data->m_acc[1],
-		data->m_acc[2],data->m_acc[3]);
 }
-

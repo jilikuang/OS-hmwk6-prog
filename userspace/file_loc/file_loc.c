@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 #include "file_loc.h"
 
 
@@ -35,17 +36,17 @@ int main(int argc, char **argv)
 	log("GPS read from file: %s \n", pathname);
 
 	retval = get_gps_location(pathname, &loc);
-/*
+
 	if(retval < 0){
 		log("__NR_set_gps_location failed\n");
 		log("retval: %f\n", (float)retval);
 		return -1;
 	}
-*/
+	
 	log("__NR_set_gps_location success\n");
 
-	log("latitude: %f longitude: %f accuracy: %f age: %f \n",
-	loc.latitude, loc.longitude, loc.accuracy, (float)retval);
+	log("latitude: %f longitude: %f accuracy: %f age: %d \n",
+	loc.latitude, loc.longitude, loc.accuracy, retval);
 
 	log("Google Maps URL: %s%f,%f,15z \n", g_url, loc.latitude, loc.longitude);
 
