@@ -55,6 +55,8 @@ static void daemonize(void)
 		exit(EXIT_FAILURE);
 	}
 
+#if 0
+
 	/* Fork to get rid of TTY */
 	pid = fork();
 	if (pid < 0) {
@@ -64,8 +66,6 @@ static void daemonize(void)
 		log("nst parent to terminate\n");
 		exit(EXIT_SUCCESS);
 	}
-
-#if 0
 
 	/* Set up directory */
 	if (chdir("/") < 0) {

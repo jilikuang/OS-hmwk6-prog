@@ -110,7 +110,8 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 		kfree(s_kpathname);
 		return -EFAULT;
 	}
-
+	
+	kfree(s_kpathname);
 	return retval;
 }
 
