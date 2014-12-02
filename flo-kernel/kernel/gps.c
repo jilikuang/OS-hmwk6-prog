@@ -84,6 +84,7 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 	log("s_kpathname: %s\n", s_kpathname);
 
 	if (kern_path(s_kpathname, LOOKUP_FOLLOW, &s_kpath) != 0){
+		kfree(s_kpathname);
 		log("kern_path failure\n");
 		return -EAGAIN;
 	}
@@ -93,12 +94,14 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 
 	if (file_ind == NULL){
 		log("file_ind failure\n");
+		kfree(s_kpathname);
 		return -EINVAL;
 	}
 
 	/* check if the file is in ext3 */
 	if ((file_ind->i_op->get_gps_location) == NULL){
 		log("if the file is in ext3 failure\n");
+		kfree(s_kpathname);
 		return -ENODEV;
 	}
 	
@@ -112,6 +115,7 @@ SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_loca
 	}
 	
 	kfree(s_kpathname);
+	log("get_gps_location done!\n");
 	return retval;
 }
 
