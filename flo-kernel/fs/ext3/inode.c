@@ -2647,7 +2647,11 @@ do_indirects:
 	ext3_discard_reservation(inode);
 
 	mutex_unlock(&ei->truncate_mutex);
+	
+	/* @lfred: when inode time has been changed - update gps coordinates */
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME_SEC;
+	get_gps_data(&inode->m_gps);
+
 	ext3_mark_inode_dirty(handle, inode);
 
 	/*

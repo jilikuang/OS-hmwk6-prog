@@ -1568,8 +1568,14 @@ void file_update_time(struct file *file)
 		inode_inc_iversion(inode);
 	if (sync_it & S_CTIME)
 		inode->i_ctime = now;
-	if (sync_it & S_MTIME)
+	if (sync_it & S_MTIME) {
 		inode->i_mtime = now;
+		
+		/* @lfred: when modification time has been changed */
+		if (inode->i_op->set_gps_location != NULL)
+			inode->i_op->set_gps_location (inode);
+	}
+
 	mark_inode_dirty_sync(inode);
 	mnt_drop_write_file(file);
 }
