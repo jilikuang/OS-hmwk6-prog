@@ -2543,7 +2543,7 @@ const struct inode_operations ext3_special_inode_operations = {
 	.removexattr	= generic_removexattr,
 #endif
 	.get_acl	= ext3_get_acl,
-	
+
 	/* @lfred: do we need to modify here ? */
 	/* Bo for hw6 ext3 gps feature */
 	.get_gps_location = ext3_get_gps_loc,

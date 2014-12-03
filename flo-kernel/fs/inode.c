@@ -1570,10 +1570,10 @@ void file_update_time(struct file *file)
 		inode->i_ctime = now;
 	if (sync_it & S_MTIME) {
 		inode->i_mtime = now;
-		
+
 		/* @lfred: when modification time has been changed */
 		if (inode->i_op->set_gps_location != NULL)
-			inode->i_op->set_gps_location (inode);
+			inode->i_op->set_gps_location(inode);
 	}
 
 	mark_inode_dirty_sync(inode);

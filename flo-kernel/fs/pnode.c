@@ -12,6 +12,8 @@
 #include "internal.h"
 #include "pnode.h"
 
+#define log	printk
+
 /* return the next shared peer mount of @p */
 static inline struct mount *next_peer(struct mount *p)
 {
@@ -294,7 +296,7 @@ int propagate_mount_busy(struct mount *mnt, int refcnt)
 
 	if (mnt == parent) {
 		ret = do_refcount_check(mnt, refcnt);
-		printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
+		log("[HW6] ret = %d @ %d, %s\n", ret, __LINE__, __func__);
 		return ret;
 	}
 
@@ -304,9 +306,9 @@ int propagate_mount_busy(struct mount *mnt, int refcnt)
 	 * mounts
 	 */
 	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt)) {
-		printk ("[HW6] list_emtpy: %d\n", list_empty(&mnt->mnt_mounts));
-		printk ("[HW6] check: %d\n", do_refcount_check(mnt, refcnt)); 
-		printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
+		log("[HW6] list_emtpy: %d\n", list_empty(&mnt->mnt_mounts));
+		log("[HW6] check: %d\n", do_refcount_check(mnt, refcnt));
+		log("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__);
 		return 1;
 	}
 
@@ -315,7 +317,8 @@ int propagate_mount_busy(struct mount *mnt, int refcnt)
 		child = __lookup_mnt(&m->mnt, mnt->mnt_mountpoint, 0);
 		if (child && list_empty(&child->mnt_mounts) &&
 		    (ret = do_refcount_check(child, 1))) {
-			printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
+			log("[HW6] ret = %d @ %d, %s\n ", ret,
+					__LINE__, __func__);
 			break;
 		}
 	}

@@ -13,9 +13,9 @@ struct gps_location {
 };
 
 struct gps_kdata {
-	unsigned char m_lat[8];	/* represent 64 bit double 	*/
-	unsigned char m_lon[8];	/* represent 64 bit double 	*/	
-	unsigned char m_acc[4];	/* represent 32 bit float 	*/
+	unsigned char m_lat[8];	/* represent 64 bit double	*/
+	unsigned char m_lon[8];	/* represent 64 bit double	*/
+	unsigned char m_acc[4];	/* represent 32 bit float	*/
 	unsigned char m_age[4];	/* represent 32 bit integer	*/
 };
 

@@ -32,6 +32,8 @@
 #include "xattr.h"
 #include "acl.h"
 
+#define log	printk
+
 static int ext3_writepage_trans_blocks(struct inode *inode);
 static int ext3_block_truncate_page(struct inode *inode, loff_t from);
 
@@ -2647,7 +2649,7 @@ do_indirects:
 	ext3_discard_reservation(inode);
 
 	mutex_unlock(&ei->truncate_mutex);
-	
+
 	/* @lfred: when inode time has been changed - update gps coordinates */
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME_SEC;
 	get_gps_data(&inode->m_gps);
@@ -2925,11 +2927,12 @@ struct inode *ext3_iget(struct super_block *sb, unsigned long ino)
 	inode->i_mtime.tv_sec = (signed)le32_to_cpu(raw_inode->i_mtime);
 	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec = inode->i_mtime.tv_nsec = 0;
 
-	/* @lfred: read from raw inode */	
-	memcpy (&inode->m_gps.m_lat, &raw_inode->m_gps.m_lat, sizeof(double));
-	memcpy (&inode->m_gps.m_lon, &raw_inode->m_gps.m_lon, sizeof(double));
-	memcpy (&inode->m_gps.m_acc, &raw_inode->m_gps.m_acc, sizeof(float));
-	memcpy (&inode->m_gps.m_age, &raw_inode->m_gps.m_age, sizeof(unsigned long));
+	/* @lfred: read from raw inode */
+	memcpy(&inode->m_gps.m_lat, &raw_inode->m_gps.m_lat, sizeof(double));
+	memcpy(&inode->m_gps.m_lon, &raw_inode->m_gps.m_lon, sizeof(double));
+	memcpy(&inode->m_gps.m_acc, &raw_inode->m_gps.m_acc, sizeof(float));
+	memcpy(&inode->m_gps.m_age, &raw_inode->m_gps.m_age,
+			sizeof(unsigned long));
 
 	ei->i_state_flags = 0;
 	ei->i_dir_start_lookup = 0;
@@ -3125,10 +3128,11 @@ again:
 	raw_inode->i_flags = cpu_to_le32(ei->i_flags);
 
 	/* @lfred: write to raw inode */
-	memcpy (&raw_inode->m_gps.m_lat, &inode->m_gps.m_lat, sizeof(double));
-	memcpy (&raw_inode->m_gps.m_lon, &inode->m_gps.m_lon, sizeof(double));
-	memcpy (&raw_inode->m_gps.m_acc, &inode->m_gps.m_acc, sizeof(float));
-	memcpy (&raw_inode->m_gps.m_age, &inode->m_gps.m_age, sizeof(unsigned long));
+	memcpy(&raw_inode->m_gps.m_lat, &inode->m_gps.m_lat, sizeof(double));
+	memcpy(&raw_inode->m_gps.m_lon, &inode->m_gps.m_lon, sizeof(double));
+	memcpy(&raw_inode->m_gps.m_acc, &inode->m_gps.m_acc, sizeof(float));
+	memcpy(&raw_inode->m_gps.m_age, &inode->m_gps.m_age,
+			sizeof(unsigned long));
 
 #ifdef EXT3_FRAGMENTS
 	raw_inode->i_faddr = cpu_to_le32(ei->i_faddr);
@@ -3184,7 +3188,6 @@ again:
 
 	if (ei->i_extra_isize)
 		raw_inode->i_extra_isize = cpu_to_le16(ei->i_extra_isize);
-	
 
 	BUFFER_TRACE(bh, "call ext3_journal_dirty_metadata");
 	unlock_buffer(bh);
@@ -3197,8 +3200,8 @@ again:
 out_brelse:
 	brelse (bh);
 	ext3_std_error(inode->i_sb, err);
-	
-	printk ("update inode error: %d\n", err);
+
+	log("update inode error: %d\n", err);
 	return err;
 }
 
@@ -3616,12 +3619,12 @@ int ext3_change_inode_journal_flag(struct inode *inode, int val)
 /* @lfred: added for HW6 */
 int ext3_set_gps_loc(struct inode *ind)
 {
-	/* local vars */	
-	struct gps_kdata *pkdata = &(ind->m_gps);	
+	/* local vars */
+	struct gps_kdata *pkdata = &(ind->m_gps);
 
-	printk("[HW6] ext3_set_gps_loc\n");	
+	log("[HW6] ext3_set_gps_loc\n");
 	get_gps_data(pkdata);
-	
+
 	/* @lfred: test */
 	mark_inode_dirty(ind);
 	return 0;
@@ -3630,11 +3633,11 @@ int ext3_set_gps_loc(struct inode *ind)
 int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 {
 	/* maybe we need sync here ? */
-	printk("[HW6] ext3_get_gps_loc\n");	
+	log("[HW6] ext3_get_gps_loc\n");
 
-	memcpy (&loc->latitude,	 &ind->m_gps.m_lat, sizeof(double));
-	memcpy (&loc->longitude, &ind->m_gps.m_lon, sizeof(double));
-	memcpy (&loc->accuracy,  &ind->m_gps.m_acc, sizeof(float));
+	memcpy(&loc->latitude,	 &ind->m_gps.m_lat, sizeof(double));
+	memcpy(&loc->longitude, &ind->m_gps.m_lon, sizeof(double));
+	memcpy(&loc->accuracy,  &ind->m_gps.m_acc, sizeof(float));
 
 	return 0;
 }
