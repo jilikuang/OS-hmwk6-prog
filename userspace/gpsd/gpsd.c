@@ -23,8 +23,8 @@ static int read_gpsloc(FILE *fd, struct gps_location *loc)
 	fscanf(fd, "%lf", &loc->longitude);
 	fscanf(fd, "%f", &loc->accuracy);
 
-	log("Read from GPS_LOCATION_FILE latitude: %f longitude: %f accuracy: %f \n",
-		loc->latitude, loc->longitude, loc->accuracy);
+	log("Read GPS_LOCATION_FILE latitude: %f longitude: %f accuracy: %f\n",
+			loc->latitude, loc->longitude, loc->accuracy);
 
 	return 1;
 }
@@ -34,8 +34,9 @@ static void daemonize(void)
 	pid_t pid = 0;
 	FILE *fd = NULL;
 	struct gps_location loc;
+
 	/* Authentication */
-	if (getuid()!=0) {
+	if (getuid() != 0) {
 		log("Sorry you are not root\n");
 		exit(EXIT_FAILURE);
 	}
@@ -88,7 +89,7 @@ static void daemonize(void)
 
 #endif
 
-	while(1) {
+	while (1) {
 		fd = fopen(GPS_LOCATION_FILE, "r");
 		if (fd == NULL) {
 			log("Failed to open GPS_LOCATION_FILE\n");
@@ -101,10 +102,9 @@ static void daemonize(void)
 			exit(EXIT_FAILURE);
 		}
 
-		if (set_gps_location(&loc) < 0){
+		if (set_gps_location(&loc) < 0)
 			log("Failed to set_gps_location\n");
-		}
-		
+
 		/*read the values once every second*/
 		sleep(1);
 		fclose(fd);
