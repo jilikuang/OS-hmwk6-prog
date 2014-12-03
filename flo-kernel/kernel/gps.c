@@ -55,7 +55,11 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	return retval;
 }
 
-SYSCALL_DEFINE2(get_gps_location, const char __user *, pathname, struct gps_location __user *, loc){
+SYSCALL_DEFINE2(
+	get_gps_location,
+	const char __user *, pathname,
+	struct gps_location __user *, loc){
+	
 	int retval = 0;
 	char *s_kpathname;
 	struct gps_location s_kloc;

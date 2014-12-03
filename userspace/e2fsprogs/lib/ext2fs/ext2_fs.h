@@ -424,6 +424,12 @@ struct ext2_inode {
 			__u32	h_i_author;
 		} hurd2;
 	} osd2;				/* OS dependent 2 */
+
+	/* @lfred: trick here ! */
+	__u16 pad_1;
+	__u16 pad_2;
+	
+	/* @lfred: customized part */
 	struct gps_kdata m_gps;
 };
 

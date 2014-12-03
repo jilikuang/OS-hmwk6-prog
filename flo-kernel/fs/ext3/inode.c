@@ -2920,7 +2920,8 @@ struct inode *ext3_iget(struct super_block *sb, unsigned long ino)
 	inode->i_ctime.tv_sec = (signed)le32_to_cpu(raw_inode->i_ctime);
 	inode->i_mtime.tv_sec = (signed)le32_to_cpu(raw_inode->i_mtime);
 	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec = inode->i_mtime.tv_nsec = 0;
-	
+
+	/* @lfred: read from raw inode */	
 	memcpy (&inode->m_gps.m_lat, &raw_inode->m_gps.m_lat, sizeof(double));
 	memcpy (&inode->m_gps.m_lon, &raw_inode->m_gps.m_lon, sizeof(double));
 	memcpy (&inode->m_gps.m_acc, &raw_inode->m_gps.m_acc, sizeof(float));
@@ -3118,6 +3119,13 @@ again:
 	raw_inode->i_blocks = cpu_to_le32(inode->i_blocks);
 	raw_inode->i_dtime = cpu_to_le32(ei->i_dtime);
 	raw_inode->i_flags = cpu_to_le32(ei->i_flags);
+
+	/* @lfred: write to raw inode */
+	memcpy (&raw_inode->m_gps.m_lat, &inode->m_gps.m_lat, sizeof(double));
+	memcpy (&raw_inode->m_gps.m_lon, &inode->m_gps.m_lon, sizeof(double));
+	memcpy (&raw_inode->m_gps.m_acc, &inode->m_gps.m_acc, sizeof(float));
+	memcpy (&raw_inode->m_gps.m_age, &inode->m_gps.m_age, sizeof(unsigned long));
+
 #ifdef EXT3_FRAGMENTS
 	raw_inode->i_faddr = cpu_to_le32(ei->i_faddr);
 	raw_inode->i_frag = ei->i_frag_no;
@@ -3172,20 +3180,7 @@ again:
 
 	if (ei->i_extra_isize)
 		raw_inode->i_extra_isize = cpu_to_le16(ei->i_extra_isize);
-/*
-	raw_inode->m_gps.m_lat[0] = inode->m_gps.m_lat[0];
-	raw_inode->m_gps.m_lat[1] = inode->m_gps.m_lat[1];
-	raw_inode->m_gps.m_lat[2] = inode->m_gps.m_lat[2];
-	raw_inode->m_gps.m_lat[3] = inode->m_gps.m_lat[3];
-	raw_inode->m_gps.m_lat[4] = inode->m_gps.m_lat[4];
-	raw_inode->m_gps.m_lat[5] = inode->m_gps.m_lat[5];
-	raw_inode->m_gps.m_lat[6] = inode->m_gps.m_lat[6];
-	raw_inode->m_gps.m_lat[7] = inode->m_gps.m_lat[7];
-*/
-	memcpy (&raw_inode->m_gps.m_lat, &inode->m_gps.m_lat, sizeof(double));
-	memcpy (&raw_inode->m_gps.m_lon, &inode->m_gps.m_lon, sizeof(double));
-	memcpy (&raw_inode->m_gps.m_acc, &inode->m_gps.m_acc, sizeof(float));
-	memcpy (&raw_inode->m_gps.m_age, &inode->m_gps.m_age, sizeof(unsigned long));
+	
 
 	BUFFER_TRACE(bh, "call ext3_journal_dirty_metadata");
 	unlock_buffer(bh);

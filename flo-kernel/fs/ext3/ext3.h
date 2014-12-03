@@ -309,6 +309,8 @@ struct ext3_inode {
 	} osd2;				/* OS dependent 2 */
 	__le16	i_extra_isize;
 	__le16	i_pad1;
+	
+	/* @lfred: added for HW6 */
 	struct gps_kdata m_gps;
 };
 
