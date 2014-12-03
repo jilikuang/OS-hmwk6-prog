@@ -12,7 +12,8 @@ adb shell rm /data/misc/hmwk6.fs
 adb push hmwk6.fs /data/misc
 adb shell rmdir /data/misc/hmwk6
 adb shell mkdir /data/misc/hmwk6
-adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
+#adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
+adb shell mount -o loop=/dev/loop0 -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
 
 #adb shell umount /data/misc/hmwk6
 #adb pull /data/misc/hmwk6.fs

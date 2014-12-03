@@ -3193,6 +3193,8 @@ again:
 out_brelse:
 	brelse (bh);
 	ext3_std_error(inode->i_sb, err);
+	
+	printk ("update inode error: %d\n", err);
 	return err;
 }
 
@@ -3615,20 +3617,20 @@ int ext3_set_gps_loc(struct inode *ind)
 
 	printk("[HW6] ext3_set_gps_loc\n");	
 	get_gps_data(pkdata);
+	
+	/* @lfred: test */
+	mark_inode_dirty(ind);
 	return 0;
 }
 
 int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 {
-	long int age; 
-	
 	/* maybe we need sync here ? */
 	printk("[HW6] ext3_get_gps_loc\n");	
 
-	memcpy (&loc->latitude, &ind->m_gps.m_lat, sizeof(double));
+	memcpy (&loc->latitude,	 &ind->m_gps.m_lat, sizeof(double));
 	memcpy (&loc->longitude, &ind->m_gps.m_lon, sizeof(double));
-	memcpy (&loc->accuracy, &ind->m_gps.m_acc, sizeof(float));
-	memcpy (&age, &ind->m_gps.m_age, sizeof(float));
+	memcpy (&loc->accuracy,  &ind->m_gps.m_acc, sizeof(float));
 
-	return age;
+	return 0;
 }

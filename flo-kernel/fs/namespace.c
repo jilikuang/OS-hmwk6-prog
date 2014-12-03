@@ -1094,8 +1094,10 @@ static int do_umount(struct mount *mnt, int flags)
 	LIST_HEAD(umount_list);
 
 	retval = security_sb_umount(&mnt->mnt, flags);
-	if (retval)
+	if (retval) {
+		printk ("[HW6] ret = %d @ %d, %s\n ", retval, __LINE__, __func__ );
 		return retval;
+	}
 
 	/*
 	 * Allow userspace to request a mountpoint be expired rather than
@@ -1115,6 +1117,7 @@ static int do_umount(struct mount *mnt, int flags)
 		br_write_lock(vfsmount_lock);
 		if (mnt_get_count(mnt) != 2) {
 			br_write_unlock(vfsmount_lock);
+			printk ("[HW6] ret = %d @ %d, %s\n ", retval, __LINE__, __func__ );
 			return -EBUSY;
 		}
 		br_write_unlock(vfsmount_lock);
@@ -1166,14 +1169,18 @@ static int do_umount(struct mount *mnt, int flags)
 		shrink_submounts(mnt, &umount_list);
 
 	retval = -EBUSY;
+	printk ("[HW6] ret = %d @ %d, %s\n ", (flags & MNT_DETACH) , __LINE__, __func__ );
+	
 	if (flags & MNT_DETACH || !propagate_mount_busy(mnt, 2)) {
 		if (!list_empty(&mnt->mnt_list))
 			umount_tree(mnt, 1, &umount_list);
 		retval = 0;
 	}
+
 	br_write_unlock(vfsmount_lock);
 	up_write(&namespace_sem);
 	release_mounts(&umount_list);
+	printk ("[HW6] ret = %d @ %d, %s\n ", retval, __LINE__, __func__ );
 	return retval;
 }
 

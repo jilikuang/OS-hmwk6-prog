@@ -292,23 +292,32 @@ int propagate_mount_busy(struct mount *mnt, int refcnt)
 	struct mount *parent = mnt->mnt_parent;
 	int ret = 0;
 
-	if (mnt == parent)
-		return do_refcount_check(mnt, refcnt);
+	if (mnt == parent) {
+		ret = do_refcount_check(mnt, refcnt);
+		printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
+		return ret;
+	}
 
 	/*
 	 * quickly check if the current mount can be unmounted.
 	 * If not, we don't have to go checking for all other
 	 * mounts
 	 */
-	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt))
+	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt)) {
+		printk ("[HW6] list_emtpy: %d\n", list_empty(&mnt->mnt_mounts));
+		printk ("[HW6] check: %d\n", do_refcount_check(mnt, refcnt)); 
+		printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
 		return 1;
+	}
 
 	for (m = propagation_next(parent, parent); m;
 	     		m = propagation_next(m, parent)) {
 		child = __lookup_mnt(&m->mnt, mnt->mnt_mountpoint, 0);
 		if (child && list_empty(&child->mnt_mounts) &&
-		    (ret = do_refcount_check(child, 1)))
+		    (ret = do_refcount_check(child, 1))) {
+			printk ("[HW6] ret = %d @ %d, %s\n ", ret, __LINE__, __func__ );
 			break;
+		}
 	}
 	return ret;
 }

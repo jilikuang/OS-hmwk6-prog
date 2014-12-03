@@ -87,7 +87,7 @@ SYSCALL_DEFINE2(
 
 	log("s_kpathname: %s\n", s_kpathname);
 
-	if (kern_path(s_kpathname, LOOKUP_FOLLOW, &s_kpath) != 0){
+	if (kern_path(s_kpathname, LOOKUP_FOLLOW, &s_kpath) != 0) {
 		kfree(s_kpathname);
 		log("kern_path failure\n");
 		return -EAGAIN;
@@ -96,14 +96,16 @@ SYSCALL_DEFINE2(
 	file_ind = s_kpath.dentry->d_inode;
 	log("s_kpath dentry name: %s \n", s_kpath.dentry->d_name.name);
 
-	if (file_ind == NULL){
+	if (file_ind == NULL) {
 		log("file_ind failure\n");
 		kfree(s_kpathname);
 		return -EINVAL;
 	}
 
 	/* check if the file is in ext3 */
-	if ((file_ind->i_op->get_gps_location) == NULL){
+	if (	file_ind->i_op == NULL ||
+		file_ind->i_op->get_gps_location == NULL) {
+
 		log("if the file is in ext3 failure\n");
 		kfree(s_kpathname);
 		return -ENODEV;
@@ -117,7 +119,9 @@ SYSCALL_DEFINE2(
 		kfree(s_kpathname);
 		return -EFAULT;
 	}
-	
+
+	/* @lfred: test - decrement the refcount */
+	path_put(&s_kpath);	
 	kfree(s_kpathname);
 	log("get_gps_location done!\n");
 	return retval;
