@@ -372,9 +372,9 @@ struct ext4_new_group_input {
 #define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
 struct gps_kdata {
-	unsigned char m_lat[8];	/* represent 64 bit double 	*/
-	unsigned char m_lon[8];	/* represent 64 bit double 	*/	
-	unsigned char m_acc[4];	/* represent 32 bit float 	*/
+	unsigned char m_lat[8];	/* represent 64 bit double	*/
+	unsigned char m_lon[8];	/* represent 64 bit double	*/
+	unsigned char m_acc[4];	/* represent 32 bit float	*/
 	unsigned char m_age[4];	/* represent 32 bit integer	*/
 };
 
@@ -428,7 +428,7 @@ struct ext2_inode {
 	/* @lfred: trick here ! */
 	__u16 pad_1;
 	__u16 pad_2;
-	
+
 	/* @lfred: customized part */
 	struct gps_kdata m_gps;
 };
