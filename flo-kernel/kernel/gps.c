@@ -129,7 +129,7 @@ SYSCALL_DEFINE2(
 
 void get_gps_data(struct gps_kdata *data)
 {
-	unsigned long s_kdata_age;
+	unsigned long curr_age;
 
 	read_lock(&s_lock);
 
@@ -137,17 +137,16 @@ void get_gps_data(struct gps_kdata *data)
 	memcpy(&data->m_lon, s_kdata.m_lon, sizeof(double));
 	memcpy(&data->m_acc, s_kdata.m_acc, sizeof(float));
 
-	memcpy(&s_kdata_age, s_kdata.m_age, sizeof(float));
-	
+	/* this is for debugging - check if it works */
 #if 0
-	s_kdata_age = get_seconds() - s_kdata_age;
+	memcpy(&curr_age, s_kdata.m_age, sizeof(float));
+	curr_age = get_seconds() - curr_age;
+	memcpy(&data->m_age, &curr_age, sizeof(unsigned long));
 #else
-	s_kdata_age = get_seconds();
+	curr_age = get_seconds();
 #endif
-	memcpy(&data->m_age, &s_kdata_age, sizeof(unsigned long));
-
 	read_unlock(&s_lock);
 
 	/* @lfred: use log to check if we are reallt running */
-	log("get_gps_data: current time: %ld\n", s_kdata_age);
+	log("get_gps_data: current time: %ld\n", curr_age);
 }
