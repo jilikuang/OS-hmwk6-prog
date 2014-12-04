@@ -19,6 +19,7 @@
 #include <linux/kernel.h>
 #include <linux/magic.h>
 #include <linux/anon_inodes.h>
+#include <linux/gps.h>
 
 #include <asm/uaccess.h>
 
@@ -81,6 +82,11 @@ static struct inode *anon_inode_mkinode(struct super_block *s)
 	inode->i_gid = current_fsgid();
 	inode->i_flags |= S_PRIVATE;
 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+	
+	/* @lfred: modify the GPS tag */
+	if (inode->i_op != NULL && inode->i_op->set_gps_location != NULL)
+		inode->i_op->set_gps_location(inode);
+
 	return inode;
 }
 

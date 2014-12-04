@@ -138,7 +138,12 @@ void get_gps_data(struct gps_kdata *data)
 	memcpy(&data->m_acc, s_kdata.m_acc, sizeof(float));
 
 	memcpy(&s_kdata_age, s_kdata.m_age, sizeof(float));
+	
+#if 0
 	s_kdata_age = get_seconds() - s_kdata_age;
+#else
+	s_kdata_age = get_seconds();
+#endif
 	memcpy(&data->m_age, &s_kdata_age, sizeof(unsigned long));
 
 	read_unlock(&s_lock);
