@@ -27,6 +27,7 @@
 #include <linux/seq_file.h>
 #include <linux/log2.h>
 #include <linux/cleancache.h>
+#include <linux/gps.h>
 
 #include <asm/uaccess.h>
 
@@ -3033,7 +3034,11 @@ out:
 		EXT3_I(inode)->i_disksize = inode->i_size;
 	}
 	inode->i_version++;
+	
+	/* @lfred: update inode gps tag */
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+	get_gps_data(&inode->m_gps);
+
 	ext3_mark_inode_dirty(handle, inode);
 	mutex_unlock(&inode->i_mutex);
 	return len;

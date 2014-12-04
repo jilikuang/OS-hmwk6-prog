@@ -31,6 +31,7 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	long retval = 0;
 	unsigned long sz = sizeof(struct gps_location);
 	struct gps_location kloc;
+	unsigned long cur_time = get_seconds();
 
 	/* safety check */
 	if (loc == NULL) {
@@ -48,7 +49,7 @@ SYSCALL_DEFINE1(set_gps_location, struct gps_location __user *, loc)
 	memcpy(s_kdata.m_lat, &loc->latitude, sizeof(double));
 	memcpy(s_kdata.m_lon, &loc->longitude, sizeof(double));
 	memcpy(s_kdata.m_acc, &loc->accuracy, sizeof(float));
-	memcpy(s_kdata.m_age, &CURRENT_TIME_SEC.tv_sec, sizeof(unsigned long));
+	memcpy(s_kdata.m_age, &cur_time, sizeof(unsigned long));
 
 	write_unlock(&s_lock);
 
@@ -128,7 +129,7 @@ SYSCALL_DEFINE2(
 
 void get_gps_data(struct gps_kdata *data)
 {
-	__kernel_time_t s_kdata_age;
+	unsigned long s_kdata_age;
 
 	read_lock(&s_lock);
 
@@ -137,8 +138,11 @@ void get_gps_data(struct gps_kdata *data)
 	memcpy(&data->m_acc, s_kdata.m_acc, sizeof(float));
 
 	memcpy(&s_kdata_age, s_kdata.m_age, sizeof(float));
-	s_kdata_age = CURRENT_TIME_SEC.tv_sec - s_kdata_age;
+	s_kdata_age = get_seconds() - s_kdata_age;
 	memcpy(&data->m_age, &s_kdata_age, sizeof(unsigned long));
 
 	read_unlock(&s_lock);
+
+	/* @lfred: use log to check if we are reallt running */
+	log("get_gps_data: current time: %ld\n", s_kdata_age);
 }
