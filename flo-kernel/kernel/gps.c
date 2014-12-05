@@ -138,7 +138,7 @@ void get_gps_data(struct gps_kdata *data)
 	memcpy(&data->m_acc, s_kdata.m_acc, sizeof(float));
 
 	/* this is for debugging - check if it works */
-#if 0
+#if 1
 	memcpy(&curr_age, s_kdata.m_age, sizeof(float));
 	curr_age = get_seconds() - curr_age;
 	memcpy(&data->m_age, &curr_age, sizeof(unsigned long));
@@ -148,5 +148,5 @@ void get_gps_data(struct gps_kdata *data)
 	read_unlock(&s_lock);
 
 	/* @lfred: use log to check if we are reallt running */
-	log("get_gps_data: current time: %ld\n", curr_age);
+	log("[HW6] get_gps_data: current time: %ld\n", curr_age);
 }

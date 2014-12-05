@@ -3211,7 +3211,6 @@ out_brelse:
 	brelse (bh);
 	ext3_std_error(inode->i_sb, err);
 
-	log("update inode error: %d\n", err);
 	return err;
 }
 

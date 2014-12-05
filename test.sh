@@ -15,10 +15,10 @@ adb shell rm /data/misc/hmwk6.fs
 adb push hmwk6.fs /data/misc
 adb shell rmdir /data/misc/hmwk6
 adb shell mkdir /data/misc/hmwk6
-#adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
 
 # mount device, start gps daemon
-adb shell mount -o loop=/dev/loop0 -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
+adb shell mount -o loop -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
+#adb shell mount -o loop=/dev/loop0 -t ext3 /data/misc/hmwk6.fs /data/misc/hmwk6
 #adb shell /data/misc/gpsd 1>/dev/null 2>/dev/null
 
 #adb shell umount /data/misc/hmwk6
