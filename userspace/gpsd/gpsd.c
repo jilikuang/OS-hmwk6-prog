@@ -32,6 +32,7 @@ static int read_gpsloc(FILE *fd, struct gps_location *loc)
 static void daemonize(void)
 {
 	pid_t pid = 0;
+	int fd = 0;
 
 	/* Authentication */
 	if (getuid() != 0) {
@@ -53,8 +54,6 @@ static void daemonize(void)
 		log("Failed to set sid\n");
 		exit(EXIT_FAILURE);
 	}
-
-#if 0
 
 	/* Fork to get rid of TTY */
 	pid = fork();
@@ -81,11 +80,11 @@ static void daemonize(void)
 		exit(EXIT_FAILURE);
 	}
 	dup2(fd, 0);
+#ifndef GPSD_DEBUG
 	dup2(fd, 1);
+#endif
 	dup2(fd, 2);
 	close(fd);
-
-#endif
 }
 
 int main(int argc, char *argv[])
