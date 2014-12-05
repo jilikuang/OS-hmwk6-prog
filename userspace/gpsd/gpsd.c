@@ -32,8 +32,6 @@ static int read_gpsloc(FILE *fd, struct gps_location *loc)
 static void daemonize(void)
 {
 	pid_t pid = 0;
-	FILE *fd = NULL;
-	struct gps_location loc;
 
 	/* Authentication */
 	if (getuid() != 0) {
@@ -88,6 +86,14 @@ static void daemonize(void)
 	close(fd);
 
 #endif
+}
+
+int main(int argc, char *argv[])
+{
+	FILE *fd = NULL;
+	struct gps_location loc;
+
+	daemonize();
 
 	while (1) {
 		fd = fopen(GPS_LOCATION_FILE, "r");
@@ -109,11 +115,6 @@ static void daemonize(void)
 		sleep(1);
 		fclose(fd);
 	}
-}
-
-int main(int argc, char *argv[])
-{
-	daemonize();
 
 	return 0;
 }
