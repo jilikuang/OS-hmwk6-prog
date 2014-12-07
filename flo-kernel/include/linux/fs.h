@@ -851,7 +851,7 @@ struct inode {
 	void			*i_private; /* fs or device private pointer */
 
 	/* @lfred: added for HW6 */
-	struct gps_kdata	m_gps;
+	/*struct gps_kdata	m_gps;*/
 };
 
 static inline int inode_unhashed(struct inode *inode)

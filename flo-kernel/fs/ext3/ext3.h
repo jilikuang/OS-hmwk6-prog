@@ -23,6 +23,7 @@
 #include <linux/jbd.h>
 #include <linux/magic.h>
 #include <linux/bug.h>
+#include <linux/gps.h>
 #include <linux/blockgroup_lock.h>
 
 /*
@@ -617,6 +618,9 @@ struct ext3_inode_info {
 	atomic_t i_datasync_tid;
 
 	struct inode vfs_inode;
+
+	/* @lfred: revised for HW6 */
+	struct gps_kdata m_gps;
 };
 
 /*

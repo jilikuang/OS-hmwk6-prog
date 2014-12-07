@@ -1246,6 +1246,7 @@ static int add_dirent_to_buf(handle_t *handle, struct dentry *dentry,
 			     struct buffer_head * bh)
 {
 	struct inode	*dir = dentry->d_parent->d_inode;
+	struct ext3_inode_info *ei = EXT3_I(dir);
 	const char	*name = dentry->d_name.name;
 	int		namelen = dentry->d_name.len;
 	unsigned long	offset = 0;
@@ -1314,7 +1315,7 @@ static int add_dirent_to_buf(handle_t *handle, struct dentry *dentry,
 	 * and/or different from the directory change time.
 	 */
 	dir->i_mtime = dir->i_ctime = CURRENT_TIME_SEC;
-	get_gps_data(&dir->m_gps);
+	get_gps_data(&ei->m_gps);
 
 	ext3_update_dx_flag(dir);
 	dir->i_version++;
@@ -2072,6 +2073,7 @@ static int ext3_rmdir (struct inode * dir, struct dentry *dentry)
 {
 	int retval;
 	struct inode * inode;
+	struct ext3_inode_info *ei;
 	struct buffer_head * bh;
 	struct ext3_dir_entry_2 * de;
 	handle_t *handle;
@@ -2120,7 +2122,8 @@ static int ext3_rmdir (struct inode * dir, struct dentry *dentry)
 
 	/* @lfred: we should also update gps tag here */
 	inode->i_ctime = dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
-	get_gps_data(&dir->m_gps);
+	ei = EXT3_I(dir);
+	get_gps_data(&ei->m_gps);
 
 	ext3_mark_inode_dirty(handle, inode);
 	drop_nlink(dir);
@@ -2137,6 +2140,7 @@ static int ext3_unlink(struct inode * dir, struct dentry *dentry)
 {
 	int retval;
 	struct inode * inode;
+	struct ext3_inode_info *ei;
 	struct buffer_head * bh;
 	struct ext3_dir_entry_2 * de;
 	handle_t *handle;
@@ -2177,7 +2181,8 @@ static int ext3_unlink(struct inode * dir, struct dentry *dentry)
 
 	/* @lfred: update gps tag here */
 	dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
-	get_gps_data(&dir->m_gps);
+	ei = EXT3_I(dir);
+	get_gps_data(&ei->m_gps);
 
 	ext3_update_dx_flag(dir);
 	ext3_mark_inode_dirty(handle, dir);
@@ -2351,6 +2356,7 @@ static int ext3_rename (struct inode * old_dir, struct dentry *old_dentry,
 {
 	handle_t *handle;
 	struct inode * old_inode, * new_inode;
+	struct ext3_inode_info *ei;
 	struct buffer_head * old_bh, * new_bh, * dir_bh;
 	struct ext3_dir_entry_2 * old_de, * new_de;
 	int retval, flush_file = 0;
@@ -2427,7 +2433,8 @@ static int ext3_rename (struct inode * old_dir, struct dentry *old_dentry,
 		
 		/* @lfred: update gps tag here */
 		new_dir->i_ctime = new_dir->i_mtime = CURRENT_TIME_SEC;
-		get_gps_data(&new_dir->m_gps);
+		ei = EXT3_I(new_dir);
+		get_gps_data(&ei->m_gps);
 
 		ext3_mark_inode_dirty(handle, new_dir);
 		BUFFER_TRACE(new_bh, "call ext3_journal_dirty_metadata");
@@ -2481,7 +2488,8 @@ static int ext3_rename (struct inode * old_dir, struct dentry *old_dentry,
 
 	/* update gps tag here */
 	old_dir->i_ctime = old_dir->i_mtime = CURRENT_TIME_SEC;
-	get_gps_data(&old_dir->m_gps);
+	ei = EXT3_I(old_dir);
+	get_gps_data(&ei->m_gps);
 
 	ext3_update_dx_flag(old_dir);
 	if (dir_bh) {
