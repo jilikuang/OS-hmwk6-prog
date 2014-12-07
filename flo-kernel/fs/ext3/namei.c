@@ -2430,7 +2430,7 @@ static int ext3_rename (struct inode * old_dir, struct dentry *old_dentry,
 					      EXT3_FEATURE_INCOMPAT_FILETYPE))
 			new_de->file_type = old_de->file_type;
 		new_dir->i_version++;
-		
+
 		/* @lfred: update gps tag here */
 		new_dir->i_ctime = new_dir->i_mtime = CURRENT_TIME_SEC;
 		ei = EXT3_I(new_dir);

@@ -150,9 +150,9 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
 	if (ia_valid & ATTR_MTIME) {
 		inode->i_mtime = timespec_trunc(attr->ia_mtime,
 						inode->i_sb->s_time_gran);
-	
+
 		/* @lfred: update gps location when time is changed */
-		if (	inode->i_op != NULL && 
+		if (inode->i_op != NULL &&
 			inode->i_op->set_gps_location != NULL) {
 			inode->i_op->set_gps_location(inode);
 

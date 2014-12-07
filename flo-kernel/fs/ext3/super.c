@@ -2976,7 +2976,7 @@ static ssize_t ext3_quota_write(struct super_block *sb, int type,
 				const char *data, size_t len, loff_t off)
 {
 	struct inode *inode = sb_dqopt(sb)->files[type];
-	struct ext3-inode_info *ei = EXT3_I(inode);
+	struct ext3-inode_info * ei = EXT3_I(inode);
 	sector_t blk = off >> EXT3_BLOCK_SIZE_BITS(sb);
 	int err = 0;
 	int offset = off & (sb->s_blocksize - 1);
@@ -3035,7 +3035,7 @@ out:
 		EXT3_I(inode)->i_disksize = inode->i_size;
 	}
 	inode->i_version++;
-	
+
 	/* @lfred: update inode gps tag */
 	inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 	get_gps_data(&ei->m_gps);

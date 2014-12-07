@@ -523,9 +523,9 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
 		inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 		inode->i_fop = files->ops;
 		inode->i_ino = i;
-		
+
 		/* @lfred: fill the inode info */
-		if (	inode->i_op != NULL && 
+		if (inode->i_op != NULL &&
 			inode->i_op->set_gps_location != NULL)
 			inode->i_op->set_gps_location(inode);
 

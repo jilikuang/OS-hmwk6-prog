@@ -42,7 +42,7 @@ static void gps_from_raw_to_inode(struct ext3_inode *r, struct inode *i)
 {
 	struct ext3_inode_info *ei = EXT3_I(i);
 
-	/* do the copy */	
+	/* do the copy */
 	memcpy(&ei->m_gps.m_lat, &r->m_gps.m_lat, sizeof(double));
 	memcpy(&ei->m_gps.m_lon, &r->m_gps.m_lon, sizeof(double));
 	memcpy(&ei->m_gps.m_acc, &r->m_gps.m_acc, sizeof(float));
