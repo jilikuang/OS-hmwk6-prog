@@ -3654,6 +3654,7 @@ int ext3_set_gps_loc(struct inode *ind)
 
 int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 {
+	unsigned long age = 0;
 	struct ext3_inode_info *ei = EXT3_I(ind);
 
 	if (ei == NULL)
@@ -3665,6 +3666,7 @@ int ext3_get_gps_loc(struct inode *ind, struct gps_location *loc)
 	memcpy(&loc->latitude,	&ei->m_gps.m_lat, sizeof(double));
 	memcpy(&loc->longitude, &ei->m_gps.m_lon, sizeof(double));
 	memcpy(&loc->accuracy,  &ei->m_gps.m_acc, sizeof(float));
+	memcpy(&age, &ei->m_gps.m_age, sizeof(unsigned long));
 
-	return 0;
+	return (int)age;
 }
