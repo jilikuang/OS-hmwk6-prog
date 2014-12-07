@@ -9,7 +9,6 @@
 #include <linux/time.h>
 #include <linux/namei.h>
 #include <linux/limits.h>
-
 #include <linux/slab.h>
 
 /* debug define */
@@ -98,8 +97,15 @@ SYSCALL_DEFINE2(
 
 	if (file_ind == NULL) {
 		log("file_ind failure\n");
+		path_put(&s_kpath);
 		kfree(s_kpathname);
 		return -EINVAL;
+	}
+
+	if (generic_permission(file_ind, MAY_READ) != 0) {
+		path_put(&s_kpath);
+		kfree(s_kpathname);
+		return -EPERM;
 	}
 
 	/* check if the file is in ext3 */
@@ -107,6 +113,7 @@ SYSCALL_DEFINE2(
 		file_ind->i_op->get_gps_location == NULL) {
 
 		log("if the file is in ext3 failure\n");
+		path_put(&s_kpath);
 		kfree(s_kpathname);
 		return -ENODEV;
 	}
@@ -116,6 +123,7 @@ SYSCALL_DEFINE2(
 
 	if (copy_to_user(loc, &s_kloc, sizeof(struct gps_location)) != 0) {
 		log("copy_to_user failure\n");
+		path_put(&s_kpath);
 		kfree(s_kpathname);
 		return -EFAULT;
 	}
