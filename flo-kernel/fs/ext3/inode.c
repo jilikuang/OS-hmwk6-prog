@@ -41,23 +41,52 @@ static int ext3_block_truncate_page(struct inode *inode, loff_t from);
 static void gps_from_raw_to_inode(struct ext3_inode *r, struct inode *i)
 {
 	struct ext3_inode_info *ei = EXT3_I(i);
+	unsigned short x = 1;
+	unsigned int j;
+	
+	/* CPU = little endian */
+	if (cpu_to_le16(x) == 1) {
+		/* do the copy */
+		memcpy(&ei->m_gps.m_lat, &r->m_gps.m_lat, sizeof(double));
+		memcpy(&ei->m_gps.m_lon, &r->m_gps.m_lon, sizeof(double));
+		memcpy(&ei->m_gps.m_acc, &r->m_gps.m_acc, sizeof(float));
+		memcpy(&ei->m_gps.m_age, &r->m_gps.m_age, sizeof(unsigned long));
+	} else {
+		for (j = 0; j < 8; ++j) {
+			ei->m_gps.m_lat[j] = r->m_gps.m_lat[7-j];
+			ei->m_gps.m_lon[j] = r->m_gps.m_lon[7-j];
+		}
 
-	/* do the copy */
-	memcpy(&ei->m_gps.m_lat, &r->m_gps.m_lat, sizeof(double));
-	memcpy(&ei->m_gps.m_lon, &r->m_gps.m_lon, sizeof(double));
-	memcpy(&ei->m_gps.m_acc, &r->m_gps.m_acc, sizeof(float));
-	memcpy(&ei->m_gps.m_age, &r->m_gps.m_age, sizeof(unsigned long));
+		for (j = 0; j < 4; ++j) {
+			ei->m_gps.m_lat[j] = r->m_gps.m_lat[3-j];
+			ei->m_gps.m_lon[j] = r->m_gps.m_lon[3-j];
+		}
+	}
 }
 
 static void gps_from_inode_to_raw(struct ext3_inode *r, struct inode *i)
 {
 	struct ext3_inode_info *ei = EXT3_I(i);
+	unsigned short x = 1;
+	unsigned int j;
 
-	/* do the copy */
-	memcpy(&r->m_gps.m_lat, &ei->m_gps.m_lat, sizeof(double));
-	memcpy(&r->m_gps.m_lon, &ei->m_gps.m_lon, sizeof(double));
-	memcpy(&r->m_gps.m_acc, &ei->m_gps.m_acc, sizeof(float));
-	memcpy(&r->m_gps.m_age, &ei->m_gps.m_age, sizeof(unsigned long));
+	if (cpu_to_le16(x) == 1) {
+		/* do the copy */
+		memcpy(&r->m_gps.m_lat, &ei->m_gps.m_lat, sizeof(double));
+		memcpy(&r->m_gps.m_lon, &ei->m_gps.m_lon, sizeof(double));
+		memcpy(&r->m_gps.m_acc, &ei->m_gps.m_acc, sizeof(float));
+		memcpy(&r->m_gps.m_age, &ei->m_gps.m_age, sizeof(unsigned long));
+	} else {
+		for (j = 0; j < 8; ++j) {
+			r->m_gps.m_lat[j] = ei->m_gps.m_lat[7-j];
+			r->m_gps.m_lon[j] = ei->m_gps.m_lon[7-j];
+		}
+
+		for (j = 0; j < 4; ++j) {
+			r->m_gps.m_lat[j] = ei->m_gps.m_lat[3-j];
+			r->m_gps.m_lon[j] = ei->m_gps.m_lon[3-j];
+		}
+	}
 }
 
 /*
